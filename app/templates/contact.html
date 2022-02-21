@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Contact Form</h1>
+<hr>
+<p>Fill in this form to contact the site owners.</p>
+
+<form action="{{ url_for('contact') }}" method="post">
+    {{ form.csrf_token }}
+
+    {% for input in form if input.widget.input_type != 'hidden' %}
+        <div class="field">
+            <p>
+                <div class="title">
+                    <p class="head">{{ input.label }}</p>
+                    {% if input.flags.required %} 
+                        <p class="require">[Required]</p>
+                    {% endif %}
+                </div>
+                {{ input.description }} <br>
+                {{ input }}
+            </p>
+        </div>
+    {% endfor %}
+
+    <br>
+
+    <button type="send" class="btn">Send</button>
+</form>
+{% endblock %}

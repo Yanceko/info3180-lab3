@@ -7,8 +7,9 @@ This file creates your application.
 
 from app import app
 from flask import render_template, request, redirect, url_for, flash
-
-
+from app import mail
+from flask_mail import Message  
+from .forms import ContactForm
 ###
 # Routing for your application.
 ###
@@ -22,8 +23,24 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Chadric Nathan")
 
+@app.route('/contact/', methods=['GET', 'POST'])
+def contact():
+
+    the_form = ContactForm()
+    if request.method == "POST":
+        if the_form.validate_on_submit():
+            msg = Message(request.form['subject'], sender=(request.form['name'], request.form['email']), recipients=['to@example.com'])
+            msg.body = request.form['message']
+            mail.send(msg)
+            flash("Form sucessfully completed!", "success")
+            return redirect(url_for('home'))
+        else:
+            flash("Please fill out all fields appropriately.")
+            flash_errors(the_form)
+
+    return render_template('contact.html', form=the_form)
 
 ###
 # The functions below should be applicable to all Flask apps.
